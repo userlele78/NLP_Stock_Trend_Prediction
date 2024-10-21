@@ -4,37 +4,25 @@ import pandas as pd
 # Web Crawling
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
 # Other
 import time
 from tqdm import tqdm
+from utils import parse_date, StockNewsCrawler, crawl_news_for_keyword
+import os
 
-def investing_com_crawl():
-    news_data = []
-    options = Options()
-    options.add_argument("--headless")  # Run in headless mode
-    options.add_argument("--no-sandbox")  # Bypass OS security model
-    options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
-    options.add_argument("--remote-debugging-port=9222")  # Enable remote debugging
+'''  CRAWLING PROCESS '''
 
 
-    link_website = "https://vn.investing.com/"
-    driver = webdriver.Chrome(options = options)  # , service=service
-    driver.get(link_website)
-    time.sleep(5)
-
-
+def search_for_keyword_Vninvesting(driver, keyword):
     # Find the search box
     seach_key_locating = driver.find_element(By.XPATH, '//*[@id="__next"]/header/div[1]/section/div[2]/div[1]/button')
     seach_key_locating.click()
 
     search_box= driver.find_element(By.XPATH, '//*[@id="__next"]/header/div[1]/section/div[2]/div[1]/div/form/input')
-    search_box.send_keys('VNI30')
+    search_box.send_keys(keyword)
     search_box.send_keys(Keys.RETURN)
     time.sleep(5)
     mouse = driver.find_element(By.XPATH, '//*[@id="fullColumn"]/div/div[2]/div[2]/div[1]/a')
@@ -43,10 +31,12 @@ def investing_com_crawl():
     news_folder = driver.find_element(By.XPATH, '//*[@id="__next"]/div[2]/div[2]/div[2]/div[1]/nav/div[1]/ul/li[3]/a')
     news_folder.click()
     time.sleep(5)
+    
 
-    ########### Crawling
 
-    # locate the > icon
+def crawl_vninvesting_news(driver, keyword):
+    '''  Take all news links  '''
+    news_data = []
     with tqdm(desc="Crawling pages") as pbar:
         while True:
             # Crawl all the link
@@ -63,8 +53,10 @@ def investing_com_crawl():
                 path = pointer.get_attribute('href')
 
                 # Save to data
-                new_data['Date']= day
+                new_data['Date']= parse_date(day)
                 new_data['Path']= path
+                new_data['Segment'] = keyword
+
                 news_data.append(new_data)
 
             # Scroll to next page
@@ -78,21 +70,15 @@ def investing_com_crawl():
             except Exception as e:
                 print(f'Next icon is not available')
                 break
-
-
+        
 
     driver.quit()
-
-
-
-
-
     # Content Crawling
-
-    for i in tqdm(range(len(news_data), desc="Scraping Articles")):
+    '''  Take all news contents  '''
+    for i in tqdm(range(len(news_data)), desc="Scraping Articles"):
         response = requests.get(news_data[i]['Path'])
         soup = BeautifulSoup(response.content, 'html.parser')
-        
+
         # Find the article container
         article_container = soup.find('div', id='article')
 
@@ -105,8 +91,23 @@ def investing_com_crawl():
         
         news_data[i]['Content'] = article_text
 
-
-    print('Finished Crawling')
+    print(f'Finished Crawling VnInvesting.com with {keyword}')
     return news_data
 
 
+# Note
+
+'''
+When searching keyword about index, this is a code for it
+
+When it comes to others, we need to locate 'Tin tuc' category and as we scroll down the page, the news comes up 
+
+
+'''
+
+
+if __name__ == "__main__":
+    link = 'https://vn.investing.com/'
+    keyword = 'Ngân hàng'
+    crawler = StockNewsCrawler()
+    crawl_news_for_keyword(crawler, link, search_for_keyword_Vninvesting, crawl_vninvesting_news, keyword)

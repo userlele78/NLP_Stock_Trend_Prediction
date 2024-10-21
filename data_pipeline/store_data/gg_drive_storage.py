@@ -5,7 +5,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FOLDER_ID = '1vsLkkxsR5dHemeh7wPyGYoKIvA2xIT-1'
-SECRET_FILE = os.path.join(BASE_DIR, '..', '..', 'dam0709123_client_secrets.json')
+SECRET_FILE = os.path.join(BASE_DIR, '..', '..', '..' ,'dam0709123_client_secrets.json') 
 
 # Authenticate Google Drive
 def authenticate_google_drive():
@@ -45,13 +45,20 @@ def set_folder_public(folder_id):
     print(f'Folder with ID {folder_id} is now public.')
 
 
-
+from io import StringIO
+import pandas as pd
 if __name__ == '__main__':
-    file_path = 'D:/Study/DSEB 63 - NEU/Year 4/NCKH/Stock trend Prediction with the Use of News Analyze/data_pipeline/test.csv'
-    file_id = upload_to_gg_drive(file_path)
-    set_folder_public(FOLDER_ID)
-    print(file_id)
-
+    # data = [
+    #     {'dict': '1'},
+    #     {'dict1': '2'}
+    # ]
+    # data = pd.DataFrame(data)
+    # # Use StringIO to create an in-memory CSV
+    # file_path = os.path.join(BASE_DIR, '..', '..', '..' ,'data.csv')
+    # file_id = upload_to_gg_drive(file_path)
+    # set_folder_public(FOLDER_ID)
+    # print(file_id)
+    pass
 
 
 

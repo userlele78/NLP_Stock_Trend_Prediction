@@ -4,57 +4,33 @@ import pandas as pd
 # Web Crawling
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 # Other
 import time
 from tqdm import tqdm
-from datetime import datetime, timedelta
-import pytz
+from .utils import *
 
 
-def parse_date(day):
-    current_time = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh'))
-    if 'giờ' in day:
-        hours_ago = int(day.split(' ')[0]) 
-        return current_time - timedelta(hours=hours_ago)
-    else:
-        return day 
-
-def viet_stock_crawling():
-    news_data = []
-    
-    options = Options()
-    options.add_argument("--headless")  # Run in headless mode
-    options.add_argument("--no-sandbox")  # Bypass OS security model
-    options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
-    options.add_argument("--remote-debugging-port=9222")  # Enable remote debugging
 
 
-    link_website = "https://vietstock.vn/"
-    driver = webdriver.Chrome(options = options)  # , service=service
-    driver.get(link_website)
-    time.sleep(5)
+'''        Viet Stock       '''
 
-
+def search_for_keyword_Vietstock(driver, keyword):
     # Find the Seach key
     search_key = driver.find_element(By.XPATH, '/html/body/div[6]/div/div/div[2]/a[2]')
     search_key.click()
     time.sleep(5)
     # Input the seach box
     search_box= driver.find_element(By.XPATH, '//*[@id="popup-search-txt"]')
-    search_box.send_keys('VN30')
+    search_box.send_keys(keyword)
     # Locate to news category
     news_folder = driver.find_element(By.XPATH, '//*[@id="search-tabs-wrapper"]/ul/li[6]/span')
     news_folder.click()
     time.sleep(5)
 
-    ########### Crawling
-
+def crawl_vietstock_news(driver, keyword):
+    news_data = []
+    '''  Take all news links  '''
     clicked_time = 0
     with tqdm(desc="Clicking 'Xem them'") as pbar:
         while True:
@@ -70,7 +46,6 @@ def viet_stock_crawling():
                 print(f'Next icon is not available on time {clicked_time}: {e}')
                 break
 
-    # Crawl all the link
     news_container = driver.find_elements(By.XPATH, '//*[@id="list-news-search"]/li')
     for new in tqdm(news_container, desc="Crawling news links"):
         new_data = {
@@ -87,18 +62,17 @@ def viet_stock_crawling():
         # Save to data
         new_data['Date'] = parse_date(day)
         new_data['Path'] = path
+        new_data['Segment'] = keyword
 
         news_data.append(new_data)
     driver.quit()
 
 
-
+    '''  Take all news contents  '''
     # Take all the content from each news
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
     }
-
-
     for i in tqdm(range(len(news_data)), desc="Scraping Articles"):
         response = requests.get(news_data[i]['Path'], headers=headers)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -113,6 +87,6 @@ def viet_stock_crawling():
 
         news_data[i]['Content'] = article_text
 
-    print('Finiished Crawling')
+    print(f'Finished Crawling Vietstock.com with {keyword}')
     
     return news_data
