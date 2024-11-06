@@ -28,35 +28,39 @@ def parse_date(day):
     else:
         return day 
 
+def setup_driver():
+    """
+    Function to set up driver for Selenium
+    """
+    options = Options()
+    # options.add_argument("--headless")  # Run in headless mode
+    # options.add_argument("--no-sandbox")  # Bypass OS security model
+    # options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+    # options.add_argument("--remote-debugging-port=9222")  # Enable remote debugging
+    driver = webdriver.Chrome(options=options)
 
-def crawl_news_for_keyword(stock_class, weblink, source_func, crawl_func, keyword):
-    driver = stock_class.setup_driver()
-    driver.get(weblink)
+    return driver
+
+
+
+def Crawling_pipeline(driver, header, website_link, keyword, main_scraping):
+    """
+    Function to crawl data from end-to-end
+
+    Attributes:
+        - driver: Driver setup for Selenium
+        - header: Headers for requests
+
+        - website_link: Link of the website
+        - keyword: Keyword for searching
+
+        - main_scraping: Scraping Function for each website
+    """
+    # Access to website 
+    driver.get(website_link)
     time.sleep(5)
-    source_func(driver, keyword)
-    news_data = crawl_func(driver, keyword)
-    stock_class.news_data.append(news_data)
 
-
-
-
-
-
-
-class StockNewsCrawler:
-    def __init__(self):
-        self.news_data = []
-
-    def setup_driver(self):
-        options = Options()
-        # options.add_argument("--headless")  # Run in headless mode
-        # options.add_argument("--no-sandbox")  # Bypass OS security model
-        # options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
-        # options.add_argument("--remote-debugging-port=9222")  # Enable remote debugging
-        driver = webdriver.Chrome(options=options)
-
-        return driver
-
-    def create_data(self):
-        self.news_data = pd.DataFrame(self.news_data)
-        self.news_data.to_csv('data.csv',header = False)
+    # Crawl data
+    data = main_scraping(driver, header, keyword)
+    
+    return data

@@ -2,7 +2,7 @@
     This py file represent the whole pipeline of the data 
 
 '''
-from crawl_data import *
+from crawl_data import * 
 from store_data import *
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
@@ -10,24 +10,38 @@ import os
 from tqdm import tqdm
 
 
-
-# Crawling
-KEYWORDS = ['Ngân hàng', 'Tài chính']
-WEBLINKS = ['https://vietstock.vn/', 'https://vn.investing.com/']
-stock_news = StockNewsCrawler()
+    
 
 
+# Pre-defined Variables
+KEYWORDS = [
+    "Lãi suất ngân hàng", "Chính sách tiền tệ", "Lợi nhuận ngân hàng", "Phát hành cổ phiếu",\
+    "Tái cấu trúc ngân hàng", "Nợ xấu", "Quy định ngân hàng",\
+    "Chính sách đất đai", "Giá bất động sản", " Lãi suất vay mua nhà", "Dự án bất động sản mới",\
+    "Điều chỉnh quy hoạch", "Pháp lý dự án",\
+    "Doanh số bán hàng", "doanh số bán hàng", "mở rộng thị trường", "hoạt động thương mại điện tử", "tăng trưởng tiêu dùng"\
+    "giá nguyên liệu", "chính sách thuế", "sản xuất công nghiệp", "các dự án mở rộng sản xuất",\
+    "đầu tư cơ sở hạ tầng", \
+    "giá dầu", "khí đốt", "chính sách năng lượng", "đầu tư vào hạ tầng năng lượng", "nguồn cung năng lượng"\
+    "giá hàng hóa tiêu dùng"", ""doanh thu bán lẻ"", ""chính sách tiêu dùng"", ""phát triển thương hiệu", "xu hướng tiêu dùng"
+    
+    ]
+WEBLINKS = ['https://www.cafef.vn/']
 
-for keyword in tqdm(KEYWORDS, desc="Crawling stock news"):
-    crawl_news_for_keyword(stock_news, WEBLINKS[1], search_for_keyword_Vninvesting, crawl_vninvesting_news, keyword)
-    crawl_news_for_keyword(stock_news, WEBLINKS[0], search_for_keyword_Vietstock, crawl_vietstock_news, keyword)
+stock_news_data = []
+
+# Data Pipeline
+for keyword in KEYWORDS:
+    stock_news_data.append(Crawling_pipeline(setup_driver(), get_headers(), WEBLINKS[0], keyword, scarping_all_data))
+    print(f"Finished: {key_word}")
 
 
-# Saving
-
-data = pd.DataFrame(stock_news.news_data)
+# Save data
+data = pd.DataFrame(stock_news_data)
 file_path = os.path.join(BASE_DIR, '..', '..' ,'data.csv')
 data.to_csv(file_path, index=False, encoding='utf-8')
+
+# Upload to gg drive
 file_id = upload_to_gg_drive()
 set_folder_public(FOLDER_ID)
 print(file_id)

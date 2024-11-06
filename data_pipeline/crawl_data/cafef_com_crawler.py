@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # Other
 import time
 from tqdm import tqdm
-from utils import parse_date, StockNewsCrawler, crawl_news_for_keyword, get_headers
+from .utils import setup_driver, get_headers, Crawling_pipeline
 import os
 
 
@@ -130,22 +130,19 @@ def scarping_all_data(driver, headers, keyword):
                 print("No more pages or error navigating to the next page.")
                 break
 
+    driver.quit()
     return news_data
 
 
 
 if __name__ == '__main__':
 
-    
+
     link = 'https://www.cafef.vn/'
     key_word = 'Ngân hàng'
-    crawler = StockNewsCrawler()
 
-    driver = crawler.setup_driver()
-    driver.get(link)
-    time.sleep(5)
+    data= Crawling_pipeline(setup_driver(), get_headers(), link, key_word, scarping_all_data)
+    print(data)
 
-
-    news_data = scarping_all_data(driver, get_headers(), key_word)
-
+    
         
