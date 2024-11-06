@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 # Other
 import time
 from tqdm import tqdm
-from .utils import *
+from utils import *
 
 
 
