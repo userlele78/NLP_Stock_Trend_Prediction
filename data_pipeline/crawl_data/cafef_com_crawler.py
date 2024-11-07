@@ -79,14 +79,16 @@ def crawl_news_content(headers,href):
     soup = BeautifulSoup(response.content, 'html.parser')
 
     article_container = soup.find("div",class_ = "content_cate wp1040")
-
-    #Publish Date
-    date_element = article_container.find("span", class_ ="pdate").get_text(strip=True)
-    # Content
-    content_div = article_container.find("div", class_ = "contentdetail")
-    content = content_div.get_text(strip=True)
-
-    return content, date_element
+    if article_container:
+      #Publish Date
+      date_element = article_container.find("span", class_ ="pdate").get_text(strip=True)
+      # Content
+      content_div = article_container.find("div", class_ = "contentdetail")
+      content = content_div.get_text(strip=True)
+      return content, date_element
+    
+    else:
+      return "No Content Found", None
 
 
 def scarping_all_data(driver, headers, keyword):
@@ -103,9 +105,8 @@ def scarping_all_data(driver, headers, keyword):
     search_for_keyword(driver, keyword)
 
     """ Take All News Links """
-    page = 0
-    with tqdm(desc="Scraping News Pages", unit="page") as pbar:
-        while True:
+    with tqdm(desc="Scraping News Pages", total=7 ,unit="page") as pbar:
+       for page in range(7):
 
             # Take all news links from the current page
             news_data.extend(take_news_href(driver))
@@ -114,6 +115,7 @@ def scarping_all_data(driver, headers, keyword):
                 content, publish_date = crawl_news_content(headers, news_data[ind]["href"])
                 news_data[ind]["publish_date"] = publish_date
                 news_data[ind]["content"] = content
+                news_data[ind]["keyword"] = keyword
 
             """ Scroll to next page  """
             # Try to navigate to the next page
@@ -125,10 +127,10 @@ def scarping_all_data(driver, headers, keyword):
                 time.sleep(2)  
                 # Update the progress bar by one page
                 pbar.update(1)
-                page += 1
             except Exception as e:
                 print("No more pages or error navigating to the next page.")
                 break
+  
 
     driver.quit()
     return news_data
@@ -136,13 +138,12 @@ def scarping_all_data(driver, headers, keyword):
 
 
 if __name__ == '__main__':
+    pass
 
+    # link = 'https://www.cafef.vn/'
+    # key_word = 'Ngân hàng'
 
-    link = 'https://www.cafef.vn/'
-    key_word = 'Ngân hàng'
-
-    data= Crawling_pipeline(setup_driver(), get_headers(), link, key_word, scarping_all_data)
-    print(data)
-
+    # data= Crawling_pipeline(setup_driver(), get_headers(), link, key_word, scarping_all_data)
+# ?    print(data)
     
         

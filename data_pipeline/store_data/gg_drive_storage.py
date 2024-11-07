@@ -3,9 +3,8 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FOLDER_ID = '1vsLkkxsR5dHemeh7wPyGYoKIvA2xIT-1'
-SECRET_FILE = os.path.join(BASE_DIR, '..', '..', '..' ,'dam0709123_client_secrets.json') 
+SECRET_FILE = os.path.abspath(os.path.join(os.getcwd(), 'dam0709123_client_secrets.json'))
 
 # Authenticate Google Drive
 def authenticate_google_drive():
@@ -45,8 +44,6 @@ def set_folder_public(folder_id):
     print(f'Folder with ID {folder_id} is now public.')
 
 
-from io import StringIO
-import pandas as pd
 if __name__ == '__main__':
     # data = [
     #     {'dict': '1'},

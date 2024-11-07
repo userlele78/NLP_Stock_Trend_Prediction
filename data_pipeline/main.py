@@ -19,30 +19,31 @@ KEYWORDS = [
     "Tái cấu trúc ngân hàng", "Nợ xấu", "Quy định ngân hàng",\
     "Chính sách đất đai", "Giá bất động sản", " Lãi suất vay mua nhà", "Dự án bất động sản mới",\
     "Điều chỉnh quy hoạch", "Pháp lý dự án",\
-    "Doanh số bán hàng", "doanh số bán hàng", "mở rộng thị trường", "hoạt động thương mại điện tử", "tăng trưởng tiêu dùng"\
+    "Doanh số bán hàng", "doanh số bán hàng", "mở rộng thị trường", "hoạt động thương mại điện tử", "tăng trưởng tiêu dùng",\
     "giá nguyên liệu", "chính sách thuế", "sản xuất công nghiệp", "các dự án mở rộng sản xuất",\
     "đầu tư cơ sở hạ tầng", \
-    "giá dầu", "khí đốt", "chính sách năng lượng", "đầu tư vào hạ tầng năng lượng", "nguồn cung năng lượng"\
-    "giá hàng hóa tiêu dùng"", ""doanh thu bán lẻ"", ""chính sách tiêu dùng"", ""phát triển thương hiệu", "xu hướng tiêu dùng"
+    "giá dầu", "khí đốt", "chính sách năng lượng", "đầu tư vào hạ tầng năng lượng", "nguồn cung năng lượng",\
+    "giá hàng hóa tiêu dùng", "doanh thu bán lẻ", "chính sách tiêu dùng", "phát triển thương hiệu", "xu hướng tiêu dùng"
     
     ]
 WEBLINKS = ['https://www.cafef.vn/']
 
-stock_news_data = []
+
 
 # Data Pipeline
+stock_news_data = []
 for keyword in KEYWORDS:
-    stock_news_data.append(Crawling_pipeline(setup_driver(), get_headers(), WEBLINKS[0], keyword, scarping_all_data))
-    print(f"Finished: {key_word}")
+    stock_news_data.extend(Crawling_pipeline(setup_driver(), get_headers(), WEBLINKS[0], keyword, scarping_all_data))
+    print(f"Finished: {keyword}")
 
 
 # Save data
+data_path = os.path.abspath(os.path.join(os.getcwd(), 'data.csv'))
 data = pd.DataFrame(stock_news_data)
-file_path = os.path.join(BASE_DIR, '..', '..' ,'data.csv')
-data.to_csv(file_path, index=False, encoding='utf-8')
+data.to_csv(data_path, index=False, encoding='utf-8')
 
 # Upload to gg drive
-file_id = upload_to_gg_drive()
+file_id = upload_to_gg_drive(data_path)
 set_folder_public(FOLDER_ID)
 print(file_id)
 
