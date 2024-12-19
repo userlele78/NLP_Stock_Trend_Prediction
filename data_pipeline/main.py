@@ -15,15 +15,17 @@ from tqdm import tqdm
 
 # Pre-defined Variables
 KEYWORDS = [
-    "Lãi suất ngân hàng", "Chính sách tiền tệ", "Lợi nhuận ngân hàng", "Phát hành cổ phiếu",\
-    "Tái cấu trúc ngân hàng", "Nợ xấu", "Quy định ngân hàng",\
-    "Chính sách đất đai", "Giá bất động sản", " Lãi suất vay mua nhà", "Dự án bất động sản mới",\
-    "Điều chỉnh quy hoạch", "Pháp lý dự án",\
-    "Doanh số bán hàng", "doanh số bán hàng", "mở rộng thị trường", "hoạt động thương mại điện tử", "tăng trưởng tiêu dùng",\
-    "giá nguyên liệu", "chính sách thuế", "sản xuất công nghiệp", "các dự án mở rộng sản xuất",\
-    "đầu tư cơ sở hạ tầng", \
-    "giá dầu", "khí đốt", "chính sách năng lượng", "đầu tư vào hạ tầng năng lượng", "nguồn cung năng lượng",\
-    "giá hàng hóa tiêu dùng", "doanh thu bán lẻ", "chính sách tiêu dùng", "phát triển thương hiệu", "xu hướng tiêu dùng"
+    # "Lãi suất ngân hàng", "Chính sách tiền tệ", "Lợi nhuận ngân hàng", "Phát hành cổ phiếu",\
+    # "Tái cấu trúc ngân hàng", "Nợ xấu", "Quy định ngân hàng",\
+    # "Chính sách đất đai", "Giá bất động sản", " Lãi suất vay mua nhà", "Dự án bất động sản mới",\
+    # "Điều chỉnh quy hoạch", "Pháp lý dự án",\
+    # "Doanh số bán hàng", "doanh số bán hàng", "mở rộng thị trường", "hoạt động thương mại điện tử", "tăng trưởng tiêu dùng",\
+    # "giá nguyên liệu", "chính sách thuế", "sản xuất công nghiệp", "các dự án mở rộng sản xuất",\
+    # "đầu tư cơ sở hạ tầng", \
+    # "giá dầu", "khí đốt", "chính sách năng lượng", "đầu tư vào hạ tầng năng lượng", "nguồn cung năng lượng",\
+    # "giá hàng hóa tiêu dùng", "doanh thu bán lẻ", "chính sách tiêu dùng", "phát triển thương hiệu", "xu hướng tiêu dùng",
+    "khối ngoại", "CAR", "giá vàng", "thanh khoản", "dầu khí", "dầu mỏ",
+"TTCK", "phát hành","cố tức","S&P 500", "FED", "P/E", "Hỗ trợ", "Vùng đỉnh", "Nới room", "TT", "Đầu tư công", "Nga-Ukraina", "Tổng kim ngạch xuất nhập khẩu", "Cán cân thương mại", "Dự phóng", "Khả năng", "Giá xăng", "CPI", "Giá dầu diesel", "Xăng dầu", "Chốt quyền trả cổ tức", "PMI", "Sự kiện tài chính", "Phiên giao dịch", "Xuất siêu", "Lãi suất tiết kiệm", "Lãi suất huy động", "Kỳ hạn"
     
     ]
 WEBLINKS = ['https://www.cafef.vn/']
